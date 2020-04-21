@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+prometheus_client = "*"
+huawei-lte-api = "*"
+gtts = "*"
+pychromecast = "*"
+pymorphy2 = "*"
+pymorphy2-dicts-ru = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.7"
