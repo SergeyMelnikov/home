@@ -10,6 +10,9 @@ gtts = "*"
 pychromecast = "*"
 pymorphy2 = "*"
 pymorphy2-dicts-ru = "*"
+python-telegram-bot = "*"
+pytricia = "*"
+netaddr = "*"
 
 [dev-packages]
 
