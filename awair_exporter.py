@@ -22,6 +22,8 @@ class AwairCollector(object):
         print(str(datetime.datetime.now()) + " " + str(data), flush=True)
 
         for metric, value in data.items():
+            if metric in ['timestamp']:
+                continue
             g = GaugeMetricFamily(
                 'awair_sensor_' + metric,
                 'Awair sensor data for ' + metric,

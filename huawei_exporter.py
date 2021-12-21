@@ -92,24 +92,27 @@ class HuaweiCollector(object):
             value=stat['rssi'][:-3],
             unit="dBm"
         )
-        yield GaugeMetricFamily(
-            'modem_rsrp',
-            'Modem RSRP',
-            value=stat['rsrp'][:-3],
-            unit="dBm"
-        )
-        yield GaugeMetricFamily(
-            'modem_rsrq',
-            'Modem RSRQ',
-            value=stat['rsrq'][:-2],
-            unit="dB"
-        )
-        yield GaugeMetricFamily(
-            'modem_sinr',
-            'Modem SINR',
-            value=stat['sinr'][:-2],
-            unit="dB"
-        )
+        if stat['rsrp']:
+            yield GaugeMetricFamily(
+                'modem_rsrp',
+                'Modem RSRP',
+                value=stat['rsrp'][:-3],
+                unit="dBm"
+            )
+        if stat['rsrq']:
+            yield GaugeMetricFamily(
+                'modem_rsrq',
+                'Modem RSRQ',
+                value=stat['rsrq'][:-2],
+                unit="dB"
+            )
+        if stat['sinr']:
+            yield GaugeMetricFamily(
+                'modem_sinr',
+                'Modem SINR',
+                value=stat['sinr'][:-2],
+                unit="dB"
+            )
 
         # print('monitoring_status = ', monitoring_status)
         # print('current_plmn = ', current_plmn)
