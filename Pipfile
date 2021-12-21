@@ -13,6 +13,8 @@ pymorphy2-dicts-ru = "*"
 python-telegram-bot = "*"
 pytricia = "*"
 netaddr = "*"
+lywsd03mmc = "*"
+bluepy = "*"
 
 [dev-packages]
 
