@@ -9,8 +9,46 @@ import time
 from http import HTTPStatus
 from io import BytesIO
 
-import pychromecast
-from gtts import gTTS
+
+def get_yandex_ogg(text):
+    import subprocess
+
+    ya_process = subprocess.Popen(["/home/melnikov/yandex-cloud/bin/yc", "config", "get", "folder-id"], stdout=subprocess.PIPE)
+    folder_id = ya_process.stdout.read().decode().strip()
+    ya_process = subprocess.Popen(["/home/melnikov/yandex-cloud/bin/yc", "iam", "create-token"], stdout=subprocess.PIPE)
+    iam_token = ya_process.stdout.read().decode().strip()
+
+    voice = 'alena' # if hash(text) % 2 else 'filipp'
+    return get_yandex_ogg_with_token(text, folder_id, iam_token)
+
+
+def get_yandex_ogg_with_token(text, folder_id, iam_token, voice='alena'):
+    import requests
+    url = 'https://tts.api.cloud.yandex.net/speech/v1/tts:synthesize'
+    headers = {
+        'Authorization': 'Bearer ' + iam_token,
+    }
+
+    data = {
+        'text': text,
+        'lang': 'ru-RU',
+        'voice': voice,
+        'folderId': folder_id,
+    }
+
+    with requests.post(url, headers=headers, data=data, stream=True) as resp:
+        if resp.status_code != 200:
+            raise RuntimeError("Invalid response received: code: %d, message: %s" % (resp.status_code, resp.text))
+
+        return resp.content
+
+
+def create_yandex_ogg(text):
+    bytes = get_yandex_ogg(text)
+    f = BytesIO()
+    f.write(bytes)
+    f.seek(0)
+    return f
 
 
 def get_local_ip(chromecast_ip):
@@ -21,7 +59,8 @@ def get_local_ip(chromecast_ip):
     return local_ip
 
 
-def create_mp3(text, language):
+def create_gtts_mp3(text, language):
+    from gtts import gTTS
     tts = gTTS(text, lang=language)
     f = BytesIO()
     tts.write_to_fp(f)
@@ -33,7 +72,7 @@ def serve_file(f):
     class HTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         def do_GET(self):
             self.send_response(HTTPStatus.OK)
-            self.send_header("Content-Type", "audio/mpeg")
+            # self.send_header("Content-Type", "audio/mpeg")
             self.send_header("Content-Length", str(len(f.getbuffer())))
             self.end_headers()
             f.seek(0)
@@ -49,6 +88,7 @@ def serve_file(f):
 
 
 def play_url(chromecast_ip, url):
+    import pychromecast
     castdevice = pychromecast.Chromecast(chromecast_ip)
     castdevice.wait()
     vol_prec = castdevice.status.volume_level
@@ -87,8 +127,9 @@ message = ' '.join(sys.argv[3:])
 local_ip = get_local_ip(chromecast_ip)
 print(f"local_ip: {local_ip}")
 
-f = create_mp3(message, language)
-print(f"mp3 size: {len(f.getvalue())}")
+#f = create_gtts_mp3(message, language)
+f = create_yandex_ogg(message)
+print(f"media size: {len(f.getvalue())}")
 
 port = serve_file(f)
 print(f"server up at port {port}")
