@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+import datetime
 import sys
 
 import bluepy
@@ -21,7 +21,7 @@ class Lywsd03Collector(object):
             for metric, value in m.items():
                 g = GaugeMetricFamily(
                     'lywsd03_sensor_' + metric,
-                    'lywsd03 sensor data for ' + metric,
+                    'Xiaomi Mijia LYWSD03 Bluetooth sensor data for ' + metric,
                     labels=['device_uuid']
                 )
                 g.add_metric(value=value, labels=[device])
@@ -32,9 +32,10 @@ class Lywsd03Collector(object):
             for attempt in range(10):
                 try:
                     client = lywsd03mmc.Lywsd03mmcClient(device)
-                    result = client.data._asdict()
+                    result = dict(client.data._asdict())
                     self.metrics[device] = result
-                    print(f"{device} -> {result}")
+                    log_record = {device: result}
+                    print(f"{str(datetime.datetime.now())} {log_record}")
                     break
                 except bluepy.btle.BTLEDisconnectError as e:
                     time.sleep(5)
