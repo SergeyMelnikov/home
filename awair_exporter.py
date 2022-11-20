@@ -31,6 +31,20 @@ class AwairCollector(object):
             )
             g.add_metric(value=value, labels=[self.device_config['device_uuid']])
             yield g
+            NEW_NAME = {
+                'temp': 'temperature',
+                'humid': 'humidity'
+            }
+            metric = NEW_NAME.get(metric, metric)
+            g = GaugeMetricFamily(
+                'sensor_' + metric,
+                'sensor data for ' + metric,
+                labels=['device_uuid', 'device_name', 'device_type']
+            )
+            g.add_metric(value=value, labels=[self.device_config['device_uuid'], 'Bedroom', 'awair-r2'])
+            yield g
+
+
 
 
 #        except Exception as e:
