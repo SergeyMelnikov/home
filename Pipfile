@@ -10,8 +10,13 @@ gtts = "*"
 pychromecast = "*"
 pymorphy2 = "*"
 pymorphy2-dicts-ru = "*"
+python-telegram-bot = "*"
+pytricia = "*"
+netaddr = "*"
+lywsd03mmc = "*"
+bluepy = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.7"
+python_version = "3.10"
