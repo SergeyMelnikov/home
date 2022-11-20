@@ -51,7 +51,8 @@ def push_to_prometheus(measurement: Measurement):
     for metric in ["temperature", "humidity", "voltage", "battery", "rssi"]:
         t = Gauge('sensor_' + metric, 'sensor data for ' + metric, registry=registry)
         t.set(getattr(measurement, metric))
-    pushadd_to_gateway(PROMETHEUS_URL, job='pushgateway',
+    pushadd_to_gateway(PROMETHEUS_URL,
+                       job='pushgateway',
                        grouping_key={'device_uuid': measurement.mac, 'device_name': measurement.sensorname,
                                      'device_type': 'lywsd03mmc'},
                        registry=registry)
@@ -121,24 +122,24 @@ try:
         strippedData_str = data_str[offset:]
         dataIdentifier = data_str[(offset - 4):offset].upper()
 
-        if dataIdentifier == "1A18" and mac in SENSORS and len(strippedData_str) == 30:
+        if dataIdentifier == "1A18" and len(strippedData_str) == 30:
             advNumber = strippedData_str[-4:-2]
             if advCounter.get(mac, None) != advNumber:
                 print("BLE packet - Custom: %s %02x %s %d" % (mac, adv_type, data_str, rssi))
                 advCounter[mac] = advNumber
                 return Measurement(
-                    battery=int.from_bytes(bytearray.fromhex(strippedData_str[24:26]), byteorder='little',
-                                           signed=False),
-                    humidity=int.from_bytes(bytearray.fromhex(strippedData_str[16:20]), byteorder='little',
-                                            signed=False) / 100.,
                     temperature=int.from_bytes(bytearray.fromhex(strippedData_str[12:16]), byteorder='little',
                                                signed=True) / 100,
+                    humidity=int.from_bytes(bytearray.fromhex(strippedData_str[16:20]), byteorder='little',
+                                            signed=False) / 100.,
                     voltage=int.from_bytes(bytearray.fromhex(strippedData_str[20:24]), byteorder='little',
                                            signed=False) / 1000.,
+                    battery=int.from_bytes(bytearray.fromhex(strippedData_str[24:26]), byteorder='little',
+                                           signed=False),
                     rssi=rssi,
                     timestamp=int(time.time()),
                     mac=mac,
-                    sensorname=SENSORS[mac] if mac in SENSORS else mac
+                    sensorname=SENSORS.get(mac, mac)
                 )
 
 
