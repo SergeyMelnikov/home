@@ -29,14 +29,15 @@ class MillCollector(object):
         #open_window = json.loads(urllib.request.urlopen(f'http://{self.ip}/open-window').read())
         #data = {**control_status, **open_window}
         print(str(datetime.datetime.now()) + " " + str(data), flush=True)
-        KEYS = [
-            'ambient_temperature',
-            'current_power',
-            'control_signal',
-            'raw_ambient_temperature',
-            'set_temperature',
-            'open_window_active_now']
-        for metric in KEYS:
+        metrics = {
+            'ambient_temperature': 'the temperature measured by sensor in Celsius degrees (with calibration offset value included)',
+            'current_power': 'the current heating power in Watts',
+            'control_signal': 'the control signal of the PID regulator (0-100%)',
+            'raw_ambient_temperature': 'the temperature measured by sensor in Celsius degrees without calibration offset value',
+            'set_temperature': 'the current set temperature in Celsius degrees',
+            'open_window_active_now': 'the open widows status: -1 - Disabled not active now, 0 - Enabled not active now, 1 - Enabled active now, -10 - error',
+        }
+        for metric in metrics.keys():
             if metric not in data:
                 print(f"No {metric} in data")
                 continue
@@ -50,7 +51,7 @@ class MillCollector(object):
                 value = mapping.get(value, -10)
             g = GaugeMetricFamily(
                 'heater_' + metric,
-                'sensor data for ' + metric,
+                metrics[metric],
                 labels=['device_uuid', 'device_name', 'device_type']
             )
             g.add_metric(value=value, labels=['70:b8:f6:b7:f4:78', 'Bedroom', 'Mill-OIL1500WIFI3'])
