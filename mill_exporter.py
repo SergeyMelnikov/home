@@ -65,7 +65,7 @@ if __name__ == '__main__':
     if len(sys.argv) > 2:
         port = int(sys.argv[2])
     else:
-        port = 8001
+        port = 8010
 
     start_http_server(port)
 
