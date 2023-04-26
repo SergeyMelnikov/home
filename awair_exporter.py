@@ -73,7 +73,7 @@ if __name__ == '__main__':
         sys.exit(1)
     REGISTRY.register(AwairCollector(config))
     if len(sys.argv) > 1:
-        port = int(sys.argv[2])
+        port = int(sys.argv[1])
     else:
         port = 8000
 
