@@ -18,6 +18,8 @@ from bluetooth_utils import (toggle_device,
 SENSORS = {
     'A4:C1:38:CE:9B:6D': 'Living Room',
     'A4:C1:38:84:28:3E': 'Bathroom',
+    'A4:C1:38:5C:2F:D1': 'Balcony',
+    'A4:C1:38:CD:77:37': 'Kitchen',
 }
 DEV_ID = 0  # the bluetooth device is hci0
 WATCHDOG_TIMER = 300  # Re-enable scanning after not receiving any BLE packet after X seconds
