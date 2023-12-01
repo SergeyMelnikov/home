@@ -29,13 +29,13 @@ try:
         urllib.request.Request(sun_today_url, headers={'User-Agent': userAgent})).read()
                                                )["properties"]["sunset"]["time"])
 except:
-    sunset = datetime.fromisoformat("2023-11-26T10:19:00Z")
+    sunset = datetime.fromisoformat("2023-11-26T11:19:00+01:00")
 try:
     sunrise = datetime.fromisoformat(json.loads(urllib.request.urlopen(
         urllib.request.Request(sun_tomorrow_url, headers={'User-Agent': userAgent})).read()
                                                 )["properties"]["sunrise"]["time"])
 except:
-    sunrise = datetime.fromisoformat("2024-01-16T09:44:00Z")
+    sunrise = datetime.fromisoformat("2024-01-16T10:44:00+01:00")
 
 met_data = json.loads(urllib.request.urlopen(
     urllib.request.Request(metno_url, headers={'User-Agent': userAgent})).read()
@@ -44,7 +44,10 @@ met_data = json.loads(urllib.request.urlopen(
 
 def getClouds(time: datetime):
     for record in met_data:
-        r_time = datetime.fromisoformat(record["time"])
+        r_time = datetime.strptime(
+            record["time"], "%Y-%m-%dT%H:%M:%SZ"
+        ).replace(tzinfo=timezone.utc)
+
         if time == r_time:
             return float(record["data"]["instant"]["details"]["cloud_area_fraction"])
     return float("nan")

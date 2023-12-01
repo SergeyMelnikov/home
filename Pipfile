@@ -15,6 +15,7 @@ pytricia = "*"
 netaddr = "*"
 lywsd03mmc = "*"
 bluepy = "*"
+humanize = "*"
 
 [dev-packages]
 
