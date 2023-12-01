@@ -36,7 +36,7 @@ class AwairCollector(object):
 #      try:
         for device in self.devices:
             data = json.loads(urllib.request.urlopen(f'http://{device.ip}/air-data/latest').read())
-            print(str(datetime.datetime.now()) + " " + str(data), flush=True)
+            print(str(datetime.datetime.now()) + " " + device.name + " " + str(data), flush=True)
 
             for metric, value in data.items():
                 if metric in ['timestamp']:
